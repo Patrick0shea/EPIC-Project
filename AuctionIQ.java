@@ -198,7 +198,7 @@ public class AuctionIQ {
                 System.out.print("Your choice: ");
                 int userChoice = Integer.parseInt(scanner.nextLine());
 
-                PropertyTaxCalculations[] data = new PropertyTaxCalculations[3];
+                PropertyTaxCalculations[] data = new PropertyTaxCalculations[2];
 
                 if (userChoice == 1) {
                     System.out.print("Enter name of your Land's relevant Authority: ");
@@ -229,7 +229,6 @@ public class AuctionIQ {
                 // Display calculations
                 for (PropertyTaxCalculations calculations : data) {
                     if (calculations != null) {
-                        System.out.println(calculations.calculation());
                         System.out.println(calculations.toString());
                     }
                 }
@@ -238,7 +237,7 @@ public class AuctionIQ {
                 System.err.println("Invalid input! Please enter a valid input.");
                 scanner.nextLine(); // Clear invalid input
             } catch (Exception e) {
-                System.err.println("An error occurred!");
+                System.err.println("An error occurred!" + e.getMessage());
             }
         }
     }
