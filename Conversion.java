@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-// Base class for conversions could create new conversion hashmaps
+// Base class
 
 public abstract class Conversion {
     protected HashMap<String, Double> conversionFactor;
