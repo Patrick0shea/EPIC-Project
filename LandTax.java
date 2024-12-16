@@ -1,9 +1,10 @@
 import java.util.HashMap;
+import java.util.InputMismatchException;
 
 public class LandTax implements PropertyTaxCalculations {
 
     private String localAuthorityName;
-    private int propertyValueBand;
+    private double propertyValueBand;
     private double lptCharge;
 
 //    HashMap for additional tax value according to the local authority
@@ -39,18 +40,22 @@ public class LandTax implements PropertyTaxCalculations {
         localAuthorityRate.put("WESTMEATH", 0.15);
         localAuthorityRate.put("WEXFORD", 0.15);
         localAuthorityRate.put("WICKLOW", 0.06);
+
     }
 
-    public LandTax(String localAuthorityName, int propertyValueBand) {
+    public LandTax(String localAuthorityName, double propertyValueBand) {
     if(localAuthorityName == null || localAuthorityName.trim().isEmpty()){
         throw new IllegalArgumentException("Local Authority name cannot be null or empty.");
+    }
+        this.localAuthorityName = localAuthorityName.trim().toUpperCase();
+    if(!localAuthorityRate.containsKey(this.localAuthorityName)){
+        throw new InputMismatchException("Error! Invalid Authority name provided");
     }
     if (propertyValueBand < 0){
         throw new IllegalArgumentException("Property value band cannot be negative.");
     }
 
 
-        this.localAuthorityName = localAuthorityName.toUpperCase();
 
         this.propertyValueBand = propertyValueBand;
 
@@ -66,7 +71,7 @@ public class LandTax implements PropertyTaxCalculations {
         return localAuthorityName;
     }
 
-    public int getPropertyValueBand() {
+    public double getPropertyValueBand() {
         return propertyValueBand;
     }
 
@@ -85,7 +90,7 @@ public class LandTax implements PropertyTaxCalculations {
 //    Method for calculating both below 17.5 Million property value band
 //    and above 17.5 Million property value band
 
-    public double basicValueBandTax(int propertyValueBand){
+    public double basicValueBandTax(double propertyValueBand){
         if(propertyValueBand <= 1750000){
             return lowValueBandTax(propertyValueBand);
         }else{
@@ -93,7 +98,7 @@ public class LandTax implements PropertyTaxCalculations {
         }
     }
 //    Method for basic tax under 17.5 Million property value band
-    private double lowValueBandTax(int propertyValueBand){
+    private double lowValueBandTax(double propertyValueBand){
         if (propertyValueBand > 0 && propertyValueBand <= 200000) {
             return  90;
         } else if (propertyValueBand > 200000 && propertyValueBand <= 262500) {
@@ -172,7 +177,12 @@ public class LandTax implements PropertyTaxCalculations {
     public String toString() {
 //        variable to get the local authority increase or decrease
         double incrementOrReduction = localAuthorityRate.getOrDefault(localAuthorityName.toUpperCase(),0.0);
-        return String.format("Name of the County: %s%nProperty Valuation Band: %d€%nLocal Authority Increase/Decrease: %.2f%%%nTotal Local Property Tax including local authority increase: %.2f€%n", getLocalAuthorityName(), getPropertyValueBand(),incrementOrReduction * 100, getLptCharge());
+        System.out.println("======================================================================");
+        return String.format("Name of the County: %s%nProperty Valuation Band: %.2f€%nLocal Authority Increase/Decrease: %.2f%%%n" +
+                "Total Local Property Tax including local authority increase: %.2f€%n",
+                getLocalAuthorityName(), getPropertyValueBand(),incrementOrReduction * 100, getLptCharge());
+
+
     }
 
 }
