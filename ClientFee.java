@@ -1,8 +1,8 @@
 public class ClientFee extends LandTax implements PropertyTaxCalculations {
-    private String clientName = "Auction IQ";
+    private final String clientName = "Auction IQ";
     private double clientFee;
 
-    public ClientFee(String localAuthorityName, int propertyValueBand) {
+    public ClientFee(String localAuthorityName, double propertyValueBand) {
 
         super( localAuthorityName,propertyValueBand);
         this.clientFee = calculation();
@@ -17,6 +17,7 @@ public class ClientFee extends LandTax implements PropertyTaxCalculations {
         return clientFee;
     }
     public String toString(){
-        return String.format("Client Name: %s%nName of the relevant Authority: %s%nProperty Value band: %d%nClient Fee: %.2f€%n",clientName,getLocalAuthorityName(),getPropertyValueBand(), clientFee);
+        System.out.println("============================================================");
+        return String.format("Client Name: %s%nName of the relevant Authority: %s%nProperty Value band: %.2f%nClient Fee: %.2f€%n",clientName,getLocalAuthorityName(),getPropertyValueBand(), clientFee);
     }
 }
