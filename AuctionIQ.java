@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -246,10 +247,11 @@ public class AuctionIQ {
 
     // Method for Land Price Prediction remains unchanged
     private static void landPricePrediction(Scanner scanner) {
-        LandValuation predictor = new LandValuation();
+        LandValuation predictor = new IrishLandValuation();
 
-        System.out.println("\nWelcome to the Land Price Predictor!");
+        System.out.println("\n-------Welcome to the Land Price Predictor!-------");
         System.out.println("Ask about land prices (e.g., 'How much would 12 hectares of arable land cost in Wexford?')");
+
 
         while (true) {
             System.out.print("\nYour question (or type 'quit' to return to main menu): ");
@@ -260,12 +262,19 @@ public class AuctionIQ {
             try {
                 String[] parsedInput = predictor.parseUserInput(userInput);
 
-                if (parsedInput[0] == null || parsedInput[1] == null || parsedInput[2] == null || parsedInput[3] == null) {
-                    System.out.println("I couldn't understand all parts of your question.");
+
+                // Validate all required inputs are present
+                if (parsedInput[0].equals("NONE") || parsedInput[1] == null ||
+                        parsedInput[2] == null || parsedInput[3] == null) {
+                    System.out.println("Please provide all required information:");
+                    System.out.println("- County name (e.g., Wexford, Dublin)");
+                    System.out.println("- Land type (Arable Land or Permanent Grassland)");
+                    System.out.println("- Size and unit (e.g., 10 HECTARE)");
                     continue;
                 }
 
-                String region = predictor.findArrayContainingCounty(parsedInput[0]);
+                // Get the region from the county
+                String region = parsedInput[0];
                 String landType = parsedInput[1];
                 double landSize = Double.parseDouble(parsedInput[2]);
                 double hectares = predictor.convertToHectares(landSize, parsedInput[3]);
@@ -274,7 +283,10 @@ public class AuctionIQ {
                 System.out.printf("Estimated price: €%.2f%n", price);
 
             } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Error: " + e.getMessage());
+                System.out.println("Please try again with valid inputs.");
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred. Please try again.");
             }
         }
     }
