@@ -57,7 +57,10 @@ public class test2 {
         // Loop through each entry in the numberMap (word and its numeric value)
         for (Map.Entry<String, Double> entry : numberMap.entrySet()) {
 
-            // Replace occurrences of the word with its numeric value in the expression
+            // replaces each word-based number in the expression with its numeric equivalent. For
+            // .getKey() = word-based number
+            // entry.getValue().toString()
+            // Converts the numeric value associated with the word-based number to a string.
             expression = expression.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue().toString());
         }
         // updated
@@ -80,15 +83,27 @@ public class test2 {
     // The Rhino engine can automatically parse and evaluate these expressions
     // handling the correct precedence and operations
     private static double evaluateSimpleExpression(String expression) {
-        Context context = Context.enter(); // Enter the Rhino context
-        try {
-            Scriptable scope = context.initStandardObjects(); // Initialize a standard Rhino scope
 
-            // evaluate the mathematical expresion as a string
+        // Sets up the environment needed to run JavaScript code within a Java program
+        Context context = Context.enter();
+
+        try {
+            // scope = javascript code can run here
+            // Scriptable is an interface in Rhino
+            // that represents a collection of objects and properties available to JavaScript code
+            // initStandardObjects() creates a standard set of JavaScript objects and functions
+            Scriptable scope = context.initStandardObjects();
+
+            // context class evaluates a string as a JavaScript expression
+            //<cmd> = generic placeholder indicating the command being evaluated.
+            // 1 = starting line number for the script.
+            // null means there’s no special security context applied.
+            // its an object because the result could be different types
             Object result = context.evaluateString(scope, expression, "<cmd>", 1, null);
 
-            // convert result which is an object to a double
+            // convert result which is an object to number type and then number type to double
             return ((Number) result).doubleValue();
+
         } finally {
             Context.exit(); // Exit the Rhino context to free up resources
         }
