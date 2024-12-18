@@ -18,14 +18,15 @@ public class AuctionIQ {
             System.out.println("2. Math Calculator");
             System.out.println("3. Land Price Prediction");
             System.out.println("4. Financial Calculator");
-            System.out.println("5. Exit");
-            System.out.print("Enter your choice (1-5): ");
+            System.out.println("5. Currency Exchange Calculator");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice (1-6): ");
 
             int choice;
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 4.");
+                System.out.println("Invalid input. Please enter a number between 1 and 6.");
                 continue;
             }
 
@@ -43,6 +44,9 @@ public class AuctionIQ {
                     financialCalculator(scanner);
                     break;
                 case 5:
+                    currencyExchangeCalculator(scanner);
+                    break;
+                case 6:
                     exit = true;
                     System.out.println("Exiting the application. Goodbye!");
                     break;
@@ -110,23 +114,22 @@ public class AuctionIQ {
         System.out.println("\nWelcome to the Math Calculator!");
         System.out.println("Type 'quit' anytime to return to the main menu.");
 
-
         // Continuously prompts the user to enter a math problem until "quit" is entered.
         while (true) {
-            System.out.print("\n" + "Enter your problem (e.g., '4 + 5 * (3 - 1)' or 'five times two'): ");
+            System.out.print("\nEnter your problem (e.g., '4 + 5 * (3 - 1)', 'five times two', 'square root of 16', '2 to the power of 3'): ");
             String problem = scanner.nextLine();
 
             // Check if the user wants to quit the program
-            if (problem.equalsIgnoreCase("Quit")) {
+            if (problem.equalsIgnoreCase("quit")) {
                 break; // Exit loop
             }
 
             try {
-                // // Replace word-based numbers with numbers(five - 5.0)
+                // Replace word-based numbers with numbers (e.g., "five" -> "5.0")
                 problem = replaceWordNumbers(problem, numberMap);
-                // Replace word-based operators with their corresponding symbols(times - *)
+                // Replace word-based operators with their corresponding symbols (e.g., "times" -> "*")
                 problem = replaceWordOperators(problem);
-                // Evaluate the  expression
+                // Evaluate the expression
                 double result = evaluateSimpleExpression(problem);
                 System.out.println("Result: " + result);
             } catch (Exception e) {
@@ -140,16 +143,23 @@ public class AuctionIQ {
         // Loop through each entry in the numberMap (word and its numeric value)
         for (Map.Entry<String, Double> entry : numberMap.entrySet()) {
 
-            // Replace occurrences of the word with its numeric value in the expression
+            // Replaces each word-based number in the expression with its numeric equivalent.
+            // entry.getKey() = word-based number (e.g., "five")
+            // entry.getValue().toString() = numeric value as a string (e.g., "5.0")
             expression = expression.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue().toString());
         }
-        // updated
+        // Return the updated expression with numbers replaced
         return expression;
     }
 
-
-
+    // Replace word-based operators with symbols or JavaScript functions
     private static String replaceWordOperators(String expression) {
+        // \\b = word boundary
+        // $1 = captured base number
+        // $3 = captured exponent number
+        // (\\d+(\\.\\d+)?) captures numbers with optional decimals
+        expression = expression.replaceAll("\\bsquare root of\\s+(\\d+(\\.\\d+)?)\\b", "Math.sqrt($1)");
+        expression = expression.replaceAll("\\b(\\d+(\\.\\d+)?)\\s+to the power of\\s+(\\d+(\\.\\d+)?)\\b", "Math.pow($1, $3)");
         expression = expression.replaceAll("\\btimes\\b", "*");
         expression = expression.replaceAll("\\bplus\\b", "+");
         expression = expression.replaceAll("\\bminus\\b", "-");
@@ -158,13 +168,31 @@ public class AuctionIQ {
     }
 
 
-    // Evaluate simple expressions with parentheses using the built-in JavaScript engine
+    // Evaluate simple expressions with parentheses using the Rhino JavaScript engine
+    // The Rhino engine can automatically parse and evaluate these expressions
+    // handling the correct precedence and operations
     private static double evaluateSimpleExpression(String expression) {
-        Context context = Context.enter(); // Enter the Rhino context
+
+        // Sets up the environment needed to run JavaScript code within a Java program
+        Context context = Context.enter();
+
         try {
-            Scriptable scope = context.initStandardObjects(); // Initialize a standard Rhino scope
+            // scope = JavaScript code can run here
+            // Scriptable is an interface in Rhino
+            // that represents a collection of objects and properties available to JavaScript code
+            // initStandardObjects() creates a standard set of JavaScript objects and functions
+            Scriptable scope = context.initStandardObjects();
+
+            // context class evaluates a string as a JavaScript expression
+            // "<cmd>" = generic placeholder indicating the command being evaluated
+            // 1 = starting line number for the script
+            // null means there’s no special security context applied
+            // it's an object because the result could be different types
             Object result = context.evaluateString(scope, expression, "<cmd>", 1, null);
-            return ((Number) result).doubleValue(); // Convert the result to a double
+
+            // Convert result which is an object to Number type and then to double
+            return ((Number) result).doubleValue();
+
         } finally {
             Context.exit(); // Exit the Rhino context to free up resources
         }
@@ -276,4 +304,37 @@ public class AuctionIQ {
             }
         }
     }
+    private static void currencyExchangeCalculator(Scanner scanner) {
+
+
+
+//      Instance the API Class
+        CurrencyValueAPI api = new CurrencyValueAPI();
+
+        while (true) {
+
+//          Allows the input to repeat until requested to stop via the user
+
+
+//          Takes in and processes the users input
+
+            System.out.print("Hello! Please Enter the Country the client is from and their Budget ");
+            System.out.println("\nExample Input: My client lives in France and has a budget of 250000");
+            System.out.println("At anytime enter Quit to exit back to the main menu");
+            System.out.print("Your input: ");
+            String userInput = scanner.nextLine();
+
+            if ("quit".equalsIgnoreCase(userInput)) break;
+
+//          Searches for the currency rate and displays it
+            String result = api.searchCurrency(userInput);
+            System.out.println(result);
+//          Fetch and Display the exchange rate
+            api.performExchange();
+            System.out.println("\n");
+        }
+    }
+
+
 }
+
