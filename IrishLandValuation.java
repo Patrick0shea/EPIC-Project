@@ -7,7 +7,7 @@ public class IrishLandValuation extends LandValuation {
     private final String[] southEast = {"WATERFORD", "KILKENNY", "CARLOW", "WEXFORD"};
     private final String dublin = "DUBLIN";
     private final String[] midEast = {"WICKLOW", "KILDARE", "MEATH"};
-    private final String[] southWest = {"KERRY", "CORK"};
+    private final String[] southWest = {"KERRY", "CORK", "TIPPERARY", "LIMERICK","CLARE"};
 
     @Override
     protected void initializeRegionPrices() {

@@ -1,9 +1,9 @@
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.HashMap;
 
 public class AuctionIQ {
 
@@ -110,97 +110,63 @@ public class AuctionIQ {
         System.out.println("\nWelcome to the Math Calculator!");
         System.out.println("Type 'quit' anytime to return to the main menu.");
 
+
+        // Continuously prompts the user to enter a math problem until "quit" is entered.
         while (true) {
-            System.out.print("\nEnter your problem (e.g., '5 times 5' or 'square root of 25'): ");
+            System.out.print("\n" + "Enter your problem (e.g., '4 + 5 * (3 - 1)' or 'five times two'): ");
             String problem = scanner.nextLine();
 
-            if (problem.equalsIgnoreCase("quit")) {
-                break; // Return to main menu
+            // Check if the user wants to quit the program
+            if (problem.equalsIgnoreCase("Quit")) {
+                break; // Exit loop
             }
 
-
-            Pattern pattern = Pattern.compile("^(-?\\d+(\\.\\d+)?)\\s*(to the power of|times|\\*|plus|\\+|minus|-|divided|/|square root of|cubed root of)\\s*(-?\\d+(\\.\\d+)?)?$");
-            Matcher matcher = pattern.matcher(problem);
-
-            if (matcher.matches()) {
-                try {
-                    String firstPart = matcher.group(1);
-                    String operator = matcher.group(2);
-                    String secondPart = matcher.group(3);
-
-                    // first number parsed from the input.
-                    double num1;
-
-                    // initialised to 0 will be assigned a value if the operation requires a second number.
-                    double num2 = 0;
-
-
-                    // for unary operator
-                    if (operator.equals("square root of") || operator.equals("cubed root of")) {
-                        num1 = parseNumber(firstPart, numberMap);
-                    } else {
-                        num1 = parseNumber(firstPart, numberMap);
-                        num2 = parseNumber(secondPart, numberMap);
-                    }
-
-                    double result = performCalculation(num1, operator, num2);
-
-                    System.out.println("Result: " + result);
-
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            } else {
-                System.out.println("Invalid input format." + "\n" + "Please try again.");
+            try {
+                // // Replace word-based numbers with numbers(five - 5.0)
+                problem = replaceWordNumbers(problem, numberMap);
+                // Replace word-based operators with their corresponding symbols(times - *)
+                problem = replaceWordOperators(problem);
+                // Evaluate the  expression
+                double result = evaluateSimpleExpression(problem);
+                System.out.println("Result: " + result);
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
             }
         }
     }
 
-    // method that takes two inputs
-    private static double parseNumber(String input, HashMap<String, Double> numberMap) {
-        if (input == null)
-            throw new IllegalArgumentException("Invalid number input.");
+    // Replace word-based numbers with digits
+    private static String replaceWordNumbers(String expression, HashMap<String, Double> numberMap) {
+        // Loop through each entry in the numberMap (word and its numeric value)
+        for (Map.Entry<String, Double> entry : numberMap.entrySet()) {
 
-        if (input.startsWith("-")) {
-
-            // input.substring removes the negative sign and gets the positive part of the number.
-            String positivePart = input.substring(1);
-
-            // checks if positive number exists in HashMap
-            // if not found it parses the positivePart as a double using Double.parseDouble().
-            return -numberMap.getOrDefault(positivePart, Double.parseDouble(input));
+            // Replace occurrences of the word with its numeric value in the expression
+            expression = expression.replaceAll("\\b" + entry.getKey() + "\\b", entry.getValue().toString());
         }
-
-        // If input exists in the numberMap, the corresponding double value is returned.
-        //If input does not exist in the numberMap, it tries to parse input as a double using Double.parseDouble().
-        return numberMap.getOrDefault(input, Double.parseDouble(input));
+        // updated
+        return expression;
     }
 
-    private static double performCalculation(double num1, String operator, double num2) {
-        // Switch statement allows the program to evaluate the operator and choose the appropriate block of code to execute
-        switch (operator) {
-            case "times":
-            case "*":
-                return num1 * num2;
-            case "plus":
-            case "+":
-                return num1 + num2;
-            case "minus":
-            case "-":
-                return num1 - num2;
-            case "divided":
-            case "/":
-                if (num2 == 0) throw new ArithmeticException("Division by zero is not allowed.");
-                return num1 / num2;
-            case "to the power of":
-                return Math.pow(num1, num2);
-            case "square root of":
-                if (num1 < 0) throw new ArithmeticException("Cannot calculate square root of a negative number.");
-                return Math.sqrt(num1);
-            case "cubed root of":
-                return Math.cbrt(num1);
-            default:
-                throw new IllegalArgumentException("Unsupported operator: " + operator);
+
+
+    private static String replaceWordOperators(String expression) {
+        expression = expression.replaceAll("\\btimes\\b", "*");
+        expression = expression.replaceAll("\\bplus\\b", "+");
+        expression = expression.replaceAll("\\bminus\\b", "-");
+        expression = expression.replaceAll("\\bdivided\\b", "/");
+        return expression;
+    }
+
+
+    // Evaluate simple expressions with parentheses using the built-in JavaScript engine
+    private static double evaluateSimpleExpression(String expression) {
+        Context context = Context.enter(); // Enter the Rhino context
+        try {
+            Scriptable scope = context.initStandardObjects(); // Initialize a standard Rhino scope
+            Object result = context.evaluateString(scope, expression, "<cmd>", 1, null);
+            return ((Number) result).doubleValue(); // Convert the result to a double
+        } finally {
+            Context.exit(); // Exit the Rhino context to free up resources
         }
     }
     private static void financialCalculator(Scanner scanner) {
@@ -263,12 +229,13 @@ public class AuctionIQ {
 
     // Method for Land Price Prediction remains unchanged
     private static void landPricePrediction(Scanner scanner) {
+        // create an instance of the IrishLandValuation class
         LandValuation predictor = new IrishLandValuation();
 
         System.out.println("\n-------Welcome to the Land Price Predictor!-------");
         System.out.println("Ask about land prices (e.g., 'How much would 12 hectares of arable land cost in Wexford?')");
 
-
+        //wrap in a while true loop until user enters quit
         while (true) {
             System.out.print("\nYour question (or type 'quit' to return to main menu): ");
             String userInput = scanner.nextLine();
@@ -276,6 +243,7 @@ public class AuctionIQ {
             if ("quit".equalsIgnoreCase(userInput)) break;
 
             try {
+                //calling the parseUserInput method to extract the key components of the prompt into an array
                 String[] parsedInput = predictor.parseUserInput(userInput);
 
 
@@ -291,7 +259,9 @@ public class AuctionIQ {
 
                 // Get the region from the county
                 String region = parsedInput[0];
+
                 String landType = parsedInput[1];
+                //convert the unit value to a double
                 double landSize = Double.parseDouble(parsedInput[2]);
                 double hectares = predictor.convertToHectares(landSize, parsedInput[3]);
 
