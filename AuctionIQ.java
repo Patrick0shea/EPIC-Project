@@ -125,13 +125,24 @@ public class AuctionIQ {
             }
 
             try {
+                // Check if the problem contains "to the power of"
+                boolean isPowerCalculation = problem.toLowerCase().contains("to the power of");
+
                 // Replace word-based numbers with numbers (e.g., "five" -> "5.0")
                 problem = replaceWordNumbers(problem, numberMap);
+
                 // Replace word-based operators with their corresponding symbols (e.g., "times" -> "*")
                 problem = replaceWordOperators(problem);
+
                 // Evaluate the expression
                 double result = evaluateSimpleExpression(problem);
-                System.out.println("Result: " + result);
+                // Print a specific message if it's a power calculation
+                if (isPowerCalculation && result < 0) {
+                    System.out.println("Result: " + (-result));
+                } else {
+                    System.out.println("Result: " + result);
+                }
+
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
