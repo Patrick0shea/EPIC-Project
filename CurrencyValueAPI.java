@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class CurrencyValueAPI extends org.example.CurrencyExchange {
+public class CurrencyValueAPI extends CurrencyExchange {
     public CurrencyValueAPI() {
         super();
     }

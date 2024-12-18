@@ -118,7 +118,7 @@ public class AuctionIQ {
                 break; // Return to main menu
             }
 
-            // regex might not work
+
             Pattern pattern = Pattern.compile("^(-?\\d+(\\.\\d+)?)\\s*(to the power of|times|\\*|plus|\\+|minus|-|divided|/|square root of|cubed root of)\\s*(-?\\d+(\\.\\d+)?)?$");
             Matcher matcher = pattern.matcher(problem);
 
@@ -128,9 +128,14 @@ public class AuctionIQ {
                     String operator = matcher.group(2);
                     String secondPart = matcher.group(3);
 
+                    // first number parsed from the input.
                     double num1;
+
+                    // initialised to 0 will be assigned a value if the operation requires a second number.
                     double num2 = 0;
 
+
+                    // for unary operator
                     if (operator.equals("square root of") || operator.equals("cubed root of")) {
                         num1 = parseNumber(firstPart, numberMap);
                     } else {
@@ -146,23 +151,33 @@ public class AuctionIQ {
                     System.out.println(e.getMessage());
                 }
             } else {
-                System.out.println("Invalid input format.\nPlease try again.");
+                System.out.println("Invalid input format." + "\n" + "Please try again.");
             }
         }
     }
 
+    // method that takes two inputs
     private static double parseNumber(String input, HashMap<String, Double> numberMap) {
-        if (input == null) throw new IllegalArgumentException("Invalid number input.");
+        if (input == null)
+            throw new IllegalArgumentException("Invalid number input.");
 
         if (input.startsWith("-")) {
+
+            // input.substring removes the negative sign and gets the positive part of the number.
             String positivePart = input.substring(1);
+
+            // checks if positive number exists in HashMap
+            // if not found it parses the positivePart as a double using Double.parseDouble().
             return -numberMap.getOrDefault(positivePart, Double.parseDouble(input));
         }
 
+        // If input exists in the numberMap, the corresponding double value is returned.
+        //If input does not exist in the numberMap, it tries to parse input as a double using Double.parseDouble().
         return numberMap.getOrDefault(input, Double.parseDouble(input));
     }
 
     private static double performCalculation(double num1, String operator, double num2) {
+        // Switch statement allows the program to evaluate the operator and choose the appropriate block of code to execute
         switch (operator) {
             case "times":
             case "*":

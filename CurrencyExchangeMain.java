@@ -5,7 +5,7 @@ public class CurrencyExchangeMain {
     public static void main(String[] args) {
 
 //      Instance the API Class
-        org.example.CurrencyValueAPI api = new org.example.CurrencyValueAPI();
+        CurrencyValueAPI api = new CurrencyValueAPI();
 
 //      Takes in and processes the users input
         Scanner scanner = new Scanner(System.in);

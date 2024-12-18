@@ -1,0 +1,21 @@
+@startuml
+
+abstract class Conversion {
+    - conversionFactor: HashMap<String, Double>
+    + convert(quantity: double, fromUnit: String, targetUnit: String): double
+    # initializeConversionFactors(): void
+}
+
+abstract class LandConversion1 extends Conversion {
+    + initializeConversionFactors(): void
+}
+
+class MathCalculator {
+    + mathCalculator(scanner: Scanner): void
+    - parseNumber(input: String, numberMap: HashMap<String, Double>): double
+    - performCalculation(num1: double, operator: String, num2: double): double
+}
+
+Conversion <|-- LandConversion1
+
+@enduml
