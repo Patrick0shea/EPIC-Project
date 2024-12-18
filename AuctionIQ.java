@@ -118,7 +118,8 @@ public class AuctionIQ {
                 break; // Return to main menu
             }
 
-            Pattern pattern = Pattern.compile("^(-?\\w+)?\\s*(to the power of|times|\\*|plus|\\+|minus|-|divided|square root of|cubed root of)\\s*(-?\\w+)?$");
+            // regex might not work
+            Pattern pattern = Pattern.compile("^(-?\\d+(\\.\\d+)?)\\s*(to the power of|times|\\*|plus|\\+|minus|-|divided|/|square root of|cubed root of)\\s*(-?\\d+(\\.\\d+)?)?$");
             Matcher matcher = pattern.matcher(problem);
 
             if (matcher.matches()) {
