@@ -43,7 +43,7 @@ public class test2 {
                 problem = replaceWordNumbers(problem, numberMap);
                 // Replace word-based operators with their corresponding symbols(times - *)
                 problem = replaceWordOperators(problem);
-                // Evaluate the  expression
+                // Evaluate the expression
                 double result = evaluateSimpleExpression(problem);
                 System.out.println("Result: " + result);
             } catch (Exception e) {
@@ -67,6 +67,7 @@ public class test2 {
 
 
     private static String replaceWordOperators(String expression) {
+        // \\b = word boundary
         expression = expression.replaceAll("\\btimes\\b", "*");
         expression = expression.replaceAll("\\bplus\\b", "+");
         expression = expression.replaceAll("\\bminus\\b", "-");
@@ -76,12 +77,18 @@ public class test2 {
 
 
     // Evaluate simple expressions with parentheses using the built-in JavaScript engine
+    // The Rhino engine can automatically parse and evaluate these expressions
+    // handling the correct precedence and operations
     private static double evaluateSimpleExpression(String expression) {
         Context context = Context.enter(); // Enter the Rhino context
         try {
             Scriptable scope = context.initStandardObjects(); // Initialize a standard Rhino scope
+
+            // evaluate the mathematical expresion as a string
             Object result = context.evaluateString(scope, expression, "<cmd>", 1, null);
-            return ((Number) result).doubleValue(); // Convert the result to a double
+
+            // convert result which is an object to a double
+            return ((Number) result).doubleValue();
         } finally {
             Context.exit(); // Exit the Rhino context to free up resources
         }

@@ -11,4 +11,3 @@ public interface CurrencyExchangeInterface {
     //  Method for the Currency Exchange rate from the CurrencyValueAPI
     String searchCurrency(String input);
 }
-
