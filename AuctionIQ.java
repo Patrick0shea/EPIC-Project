@@ -144,7 +144,7 @@ public class AuctionIQ {
                 }
 
             } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+                System.out.println("Incorrect Format " + "Please Try again");
             }
         }
     }
@@ -174,7 +174,7 @@ public class AuctionIQ {
         expression = expression.replaceAll("\\btimes\\b", "*");
         expression = expression.replaceAll("\\bplus\\b", "+");
         expression = expression.replaceAll("\\bminus\\b", "-");
-        expression = expression.replaceAll("\\bdivided\\b", "/");
+        expression = expression.replaceAll("\\bdivided by\\b", "/");
         return expression;
     }
 
@@ -199,6 +199,7 @@ public class AuctionIQ {
             // 1 = starting line number for the script
             // null means there’s no special security context applied
             // it's an object because the result could be different types
+            // evaluates JS code
             Object result = context.evaluateString(scope, expression, "<cmd>", 1, null);
 
             // Convert result which is an object to Number type and then to double
