@@ -1,0 +1,1 @@
+AuctionIQ is a calculator built for early stage auctioneers to learn about the auctioneering process. It was buily by Patrick O'Shea, Nathan Dobbyn. Hugh Murtagh and Waleed Ahmed as part of their Block 2 project for ISE. 
